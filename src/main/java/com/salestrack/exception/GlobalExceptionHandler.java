@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,6 +62,22 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred", request, null);
+    }
+
+    @ExceptionHandler(InvalidStageTransitionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidStageTransition(
+            InvalidStageTransitionException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, exception.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMessageNotReadable(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.BAD_REQUEST, "Malformed or missing request body", request, null);
     }
 
     
