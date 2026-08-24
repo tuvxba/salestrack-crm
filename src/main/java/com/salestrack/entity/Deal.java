@@ -42,6 +42,10 @@ public class Deal extends BaseEntity {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "assigned_user_id", nullable = false)
+    private User assignedUser;
+
     public Long getId() {
         return id;
     }
@@ -88,5 +92,13 @@ public class Deal extends BaseEntity {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
     }
 }

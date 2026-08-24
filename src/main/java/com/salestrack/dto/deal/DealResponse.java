@@ -14,6 +14,8 @@ public record DealResponse(
         LocalDate expectedCloseDate,
         Long companyId,
         String companyName,
+        Long assignedUserId,
+        String assignedUserName,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

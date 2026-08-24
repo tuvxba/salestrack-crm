@@ -12,4 +12,6 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findByCompanyId(Long companyId);
 
     List<Deal> findByStage(DealStage stage);
+
+    List<Deal> findByAssignedUserId(Long assignedUserId);
 }

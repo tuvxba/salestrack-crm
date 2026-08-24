@@ -20,6 +20,8 @@ public record DealRequest(
         LocalDate expectedCloseDate,
 
         @NotNull(message = "Company id is required")
-        Long companyId
+        Long companyId,
+
+        Long assignedUserId
 ) {
 }
