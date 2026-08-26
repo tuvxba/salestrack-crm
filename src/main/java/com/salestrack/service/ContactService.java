@@ -72,8 +72,7 @@ public class ContactService {
         Contact contact = getContact(id);
         contactRepository.delete(contact);
     }
-
-    private Contact getContact(Long id) {
+    public Contact getContact(Long id) {
         return contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact not found with id: " + id));
     }

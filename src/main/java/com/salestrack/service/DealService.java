@@ -141,5 +141,10 @@ public class DealService {
                 .orElseThrow(() -> new ResourceNotFoundException("Deal not found with id: " + id));
     }
 
+    public Deal getAccessibleDeal(Long id) {
+        Deal deal = getDeal(id);
+        checkDealAccess(deal, getCurrentUser());
+        return deal;
+    }
     
 }

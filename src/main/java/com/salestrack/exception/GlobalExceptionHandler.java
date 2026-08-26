@@ -98,6 +98,14 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.FORBIDDEN, "You do not have permission to perform this action", request, null);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
+            IllegalArgumentException exception,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.BAD_REQUEST, exception.getMessage(), request, null);
+    }
+
     private ResponseEntity<ErrorResponse> buildError(
             HttpStatus status,
             String message,
