@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar" class="sidebar sidebar-inner">
+    <a class="brand brand-light" th:href="@{/dashboard}">
+        <span class="brand-mark"><i class="bi bi-graph-up-arrow"></i></span>
+        <span class="brand-text">SalesTrack</span>
+    </a>
+
+    <nav class="sidebar-nav">
+        <p class="nav-section">Ana Menü</p>
+        <a th:href="@{/dashboard}" data-nav="dashboard">
+            <i class="bi bi-grid-1x2-fill"></i> Genel Bakış
+        </a>
+        <a th:href="@{/leads}" data-nav="leads">
+            <i class="bi bi-person-plus-fill"></i> Lead'ler
+        </a>
+
+        <p class="nav-section">Yönetim</p>
+        <a th:href="@{/admin/users}" data-nav="admin-users" id="nav-admin-users" style="display:none">
+            <i class="bi bi-shield-lock-fill"></i> Kullanıcılar
+        </a>
+        <a th:href="@{/deals}" data-nav="deals">
+            <i class="bi bi-kanban"></i> Fırsatlar
+        </a>
+        <a th:href="@{/companies}" data-nav="companies">
+            <i class="bi bi-buildings"></i> Firmalar
+        </a>
+        <a th:href="@{/contacts}" data-nav="contacts">
+            <i class="bi bi-person-vcard"></i> Kişiler
+        </a>
+        <a th:href="@{/activities}" data-nav="activities">
+            <i class="bi bi-check2-circle"></i> Aktiviteler
+        </a>
+        <a th:href="@{/reports}" data-nav="reports">
+            <i class="bi bi-bar-chart-line"></i> Raporlar
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button id="logout-button" class="logout-button" type="button">
+            <i class="bi bi-box-arrow-left"></i> Çıkış yap
+        </button>
+    </div>
+</aside>
+
+<header th:fragment="topbar(title)" class="topbar topbar-inner">
+    <button class="mobile-menu-btn" type="button" aria-label="Menüyü aç">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="topbar-title">
+        <h2 th:text="${title}">Sayfa</h2>
+    </div>
+    <div class="topbar-actions">
+        <div class="user-chip">
+            <span id="user-initial" class="user-initial">S</span>
+            <span class="user-meta">
+                <strong id="user-email">Kullanıcı</strong>
+                <small id="user-role">—</small>
+            </span>
+        </div>
+    </div>
+</header>
+
+<div th:fragment="toast" id="app-toast" class="app-toast d-none" role="alert"></div>
+
+</body>
+</html>

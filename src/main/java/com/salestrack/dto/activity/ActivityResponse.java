@@ -10,7 +10,9 @@ public record ActivityResponse(
         String description,
         LocalDateTime occurredAt,
         Long dealId,
+        String dealTitle,
         Long contactId,
+        String contactName,
         Long loggedByUserId,
         String loggedByUserName,
         LocalDateTime createdAt

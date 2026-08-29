@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.salestrack.dto.activity.ActivityRequest;
 import com.salestrack.dto.activity.ActivityResponse;
+import com.salestrack.enums.ActivityType;
 import com.salestrack.service.ActivityService;
 
 import jakarta.validation.Valid;
@@ -23,6 +25,11 @@ public class ActivityController {
 
     public ActivityController(ActivityService activityService) {
         this.activityService = activityService;
+    }
+
+    @GetMapping("/api/activities")
+    public List<ActivityResponse> findAll(@RequestParam(required = false) ActivityType type) {
+        return activityService.findAll(type);
     }
 
     @PostMapping("/api/activities")

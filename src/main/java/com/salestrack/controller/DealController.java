@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.salestrack.dto.deal.DealRequest;
 import com.salestrack.dto.deal.DealResponse;
+import com.salestrack.dto.deal.DealStageHistoryResponse;
 import com.salestrack.dto.deal.DealStageUpdateRequest;
 import com.salestrack.enums.DealStage;
 import com.salestrack.service.DealService;
@@ -65,5 +66,10 @@ public class DealController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         dealService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/stage-history")
+    public List<DealStageHistoryResponse> stageHistory(@PathVariable Long id) {
+        return dealService.getStageHistory(id);
     }
 }

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead'ler | SalesTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+</head>
+<body data-page="leads">
+<div class="app-shell">
+    <aside class="sidebar" th:replace="~{fragments/layout :: sidebar}"></aside>
+
+    <main class="main-content">
+        <header class="topbar" th:replace="~{fragments/layout :: topbar('Lead Yönetimi')}"></header>
+
+        <div class="page-content">
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">MÜŞTERİ ADAYLARI</p>
+                    <h1>Lead'ler</h1>
+                    <p class="text-secondary mb-0">Potansiyel müşterilerinizi takip edin ve fırsata dönüştürün.</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLeadModal">
+                    <i class="bi bi-plus-lg"></i> Yeni lead
+                </button>
+            </div>
+
+            <section class="panel panel-elevated">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input id="lead-search" type="search" placeholder="İsim, e-posta veya firma ara">
+                    </div>
+                    <select id="lead-status-filter" class="form-select">
+                        <option value="">Tüm durumlar</option>
+                        <option value="NEW">Yeni</option>
+                        <option value="CONTACTED">İletişime geçildi</option>
+                        <option value="QUALIFIED">Nitelikli</option>
+                        <option value="DISQUALIFIED">Uygun değil</option>
+                        <option value="CONVERTED">Dönüştürüldü</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table crm-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>AD / FİRMA</th>
+                                <th>İLETİŞİM</th>
+                                <th>KAYNAK</th>
+                                <th>DURUM</th>
+                                <th>SORUMLU</th>
+                                <th class="text-end">İŞLEMLER</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lead-table-body">
+                            <tr>
+                                <td colspan="6" class="text-center text-secondary py-5">Lead'ler yükleniyor…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<div class="modal fade" id="newLeadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="new-lead-form">
+                <div class="modal-header">
+                    <div>
+                        <p class="eyebrow mb-1">YENİ KAYIT</p>
+                        <h5 class="modal-title">Lead ekle</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="lead-form-alert" class="alert alert-danger d-none"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="lead-name">Ad soyad</label>
+                        <input class="form-control" id="lead-name" required maxlength="160">
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="lead-email">E-posta</label>
+                            <input class="form-control" id="lead-email" type="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="lead-phone">Telefon</label>
+                            <input class="form-control" id="lead-phone" maxlength="40">
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label" for="lead-company">Firma</label>
+                        <input class="form-control" id="lead-company" maxlength="160">
+                    </div>
+                    <div>
+                        <label class="form-label" for="lead-source">Kaynak</label>
+                        <select class="form-select" id="lead-source" required>
+                            <option value="WEBSITE">Web sitesi</option>
+                            <option value="REFERRAL">Referans</option>
+                            <option value="COLD_CALL">Soğuk arama</option>
+                            <option value="OTHER">Diğer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Lead'i kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="convertLeadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="convert-lead-form">
+                <div class="modal-header">
+                    <div>
+                        <p class="eyebrow mb-1">FIRSATA DÖNÜŞTÜR</p>
+                        <h5 class="modal-title" id="convert-lead-title">Lead'i fırsata çevir</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="convert-lead-id">
+                    <div id="convert-form-alert" class="alert alert-danger d-none"></div>
+                    <p class="text-secondary small mb-3" id="convert-lead-info"></p>
+                    <div class="mb-3">
+                        <label class="form-label" for="convert-deal-title">Fırsat başlığı</label>
+                        <input class="form-control" id="convert-deal-title" required maxlength="200">
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="convert-deal-amount">Tutar (₺)</label>
+                            <input class="form-control" id="convert-deal-amount" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="convert-deal-close">Tahmini kapanış</label>
+                            <input class="form-control" id="convert-deal-close" type="date">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label" for="convert-company">Firma</label>
+                        <select class="form-select" id="convert-company" required>
+                            <option value="">Firma seçin…</option>
+                        </select>
+                        <small class="text-secondary">Firma yoksa önce <a href="/companies">Firma ekleyin</a>.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Fırsata dönüştür</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: toast}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

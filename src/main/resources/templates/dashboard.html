@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SalesTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+</head>
+<body data-page="dashboard">
+<div class="app-shell">
+    <aside class="sidebar" th:replace="~{fragments/layout :: sidebar}"></aside>
+
+    <main class="main-content">
+        <header class="topbar" th:replace="~{fragments/layout :: topbar('Genel Bakış')}"></header>
+
+        <div class="page-content">
+            <!-- Welcome banner -->
+            <section class="welcome-banner">
+                <div class="welcome-content">
+                    <p class="eyebrow light">SATIŞ ÖZETİ</p>
+                    <h1><span id="greeting-text">Merhaba</span>, <span id="user-first-name">—</span></h1>
+                    <p class="welcome-subtitle">Pipeline ve ekip hareketlerinizi tek ekrandan takip edin.</p>
+                </div>
+                <div class="welcome-actions">
+                    <a th:href="@{/leads}" class="btn btn-light btn-welcome">
+                        <i class="bi bi-plus-lg"></i> Yeni lead
+                    </a>
+                </div>
+                <div class="welcome-decoration" aria-hidden="true">
+                    <div class="orb orb-1"></div>
+                    <div class="orb orb-2"></div>
+                </div>
+            </section>
+
+            <!-- Metric cards -->
+            <div class="metrics-grid">
+                <article class="metric-card metric-purple">
+                    <div class="metric-top">
+                        <span class="metric-icon"><i class="bi bi-funnel-fill"></i></span>
+                        <span class="metric-label">Açık fırsatlar</span>
+                    </div>
+                    <h3 id="open-deals">—</h3>
+                    <p class="metric-detail" id="open-deals-amount">Pipeline değeri yükleniyor…</p>
+                </article>
+
+                <article class="metric-card metric-blue">
+                    <div class="metric-top">
+                        <span class="metric-icon"><i class="bi bi-person-plus-fill"></i></span>
+                        <span class="metric-label">Toplam lead</span>
+                    </div>
+                    <h3 id="lead-count">—</h3>
+                    <p class="metric-detail">Sistemdeki tüm adaylar</p>
+                </article>
+
+                <article class="metric-card metric-green">
+                    <div class="metric-top">
+                        <span class="metric-icon"><i class="bi bi-trophy-fill"></i></span>
+                        <span class="metric-label">Kazanılan satış</span>
+                    </div>
+                    <h3 id="won-total">—</h3>
+                    <p class="metric-detail" id="won-detail">Bu dönemki toplam</p>
+                </article>
+
+                <article class="metric-card metric-orange">
+                    <div class="metric-top">
+                        <span class="metric-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                        <span class="metric-label">Dönüşüm oranı</span>
+                    </div>
+                    <h3 id="conversion-rate">—</h3>
+                    <p class="metric-detail">Lead → fırsat dönüşümü</p>
+                </article>
+            </div>
+
+            <!-- Main grid -->
+            <div class="dashboard-grid">
+                <!-- Pipeline -->
+                <section class="panel panel-elevated">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Satış hunisi</h2>
+                            <p>Açık fırsatların aşama dağılımı</p>
+                        </div>
+                    </div>
+                    <div id="pipeline-stages" class="pipeline-stages">
+                        <div class="empty-state">Veriler yükleniyor…</div>
+                    </div>
+                </section>
+
+                <!-- Lead status -->
+                <section class="panel panel-elevated">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Lead durumu</h2>
+                            <p>Mevcut aday dağılımı</p>
+                        </div>
+                    </div>
+                    <div id="lead-statuses" class="status-bars">
+                        <div class="empty-state">Veriler yükleniyor…</div>
+                    </div>
+                </section>
+
+                <!-- Recent leads -->
+                <section class="panel panel-elevated panel-wide">
+                    <div class="panel-header panel-header-row">
+                        <div>
+                            <h2>Son lead'ler</h2>
+                            <p>En son eklenen müşteri adayları</p>
+                        </div>
+                        <a th:href="@{/leads}" class="panel-link">Tümünü gör <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                    <div class="recent-leads" id="recent-leads">
+                        <div class="empty-state">Lead'ler yükleniyor…</div>
+                    </div>
+                </section>
+
+                <!-- Quick access -->
+                <section class="panel panel-elevated">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Hızlı erişim</h2>
+                            <p>İş akışınıza devam edin</p>
+                        </div>
+                    </div>
+                    <div class="quick-links">
+                        <a th:href="@{/leads}" class="quick-link">
+                            <span class="quick-link-icon purple"><i class="bi bi-people-fill"></i></span>
+                            <span class="quick-link-text">
+                                <strong>Lead'leri yönet</strong>
+                                <small>Adayları görüntüle ve ekle</small>
+                            </span>
+                            <i class="bi bi-chevron-right quick-link-arrow"></i>
+                        </a>
+                        <a th:href="@{/reports}" class="quick-link">
+                            <span class="quick-link-icon blue"><i class="bi bi-bar-chart-line"></i></span>
+                            <span class="quick-link-text">
+                                <strong>Raporlar</strong>
+                                <small>Pipeline ve ekip performansı</small>
+                            </span>
+                            <i class="bi bi-chevron-right quick-link-arrow"></i>
+                        </a>
+                        <a th:href="@{/deals}" class="quick-link">
+                            <span class="quick-link-icon green"><i class="bi bi-funnel-fill"></i></span>
+                            <span class="quick-link-text">
+                                <strong>Pipeline takibi</strong>
+                                <small>Fırsatları kanban görünümünde yönet</small>
+                            </span>
+                            <i class="bi bi-chevron-right quick-link-arrow"></i>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+<div th:replace="~{fragments/layout :: toast}"></div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.salestrack.dto.deal.DealRequest;
 import com.salestrack.dto.deal.DealResponse;
+import com.salestrack.dto.deal.DealStageHistoryResponse;
 import com.salestrack.dto.deal.DealStageUpdateRequest;
 import com.salestrack.entity.Company;
 import com.salestrack.entity.Deal;
+import com.salestrack.entity.DealStageHistory;
 import com.salestrack.entity.User;
 import com.salestrack.enums.DealStage;
 import com.salestrack.enums.Role;
@@ -19,6 +21,7 @@ import com.salestrack.exception.InvalidStageTransitionException;
 import com.salestrack.exception.ResourceNotFoundException;
 import com.salestrack.mapper.DealMapper;
 import com.salestrack.repository.DealRepository;
+import com.salestrack.repository.DealStageHistoryRepository;
 import com.salestrack.repository.UserRepository;
 
 @Service
@@ -29,17 +32,21 @@ public class DealService {
     private final CompanyService companyService;
     private final UserRepository userRepository;
     private final DealMapper dealMapper;
+    private final DealStageHistoryRepository dealStageHistoryRepository;
+
 
     public DealService(
             DealRepository dealRepository,
             CompanyService companyService,
             UserRepository userRepository,
-            DealMapper dealMapper
+            DealMapper dealMapper,
+            DealStageHistoryRepository dealStageHistoryRepository
     ) {
         this.dealRepository = dealRepository;
         this.companyService = companyService;
         this.userRepository = userRepository;
         this.dealMapper = dealMapper;
+        this.dealStageHistoryRepository = dealStageHistoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +86,10 @@ public class DealService {
         deal.setCompany(company);
         deal.setAssignedUser(assignedUser);
 
-        return dealMapper.toResponse(dealRepository.save(deal));
+        Deal saved = dealRepository.save(deal);
+        logStageChange(saved, null, DealStage.NEW, currentUser);
+
+        return dealMapper.toResponse(saved);
     }
 
     private User resolveAssignedUser(Long requestedUserId, User currentUser) {
@@ -115,7 +125,8 @@ public class DealService {
 
     public DealResponse updateStage(Long id, DealStageUpdateRequest request) {
         Deal deal = getDeal(id);
-        checkDealAccess(deal, getCurrentUser());
+        User currentUser = getCurrentUser();
+        checkDealAccess(deal, currentUser);
 
         DealStage currentStage = deal.getStage();
         DealStage targetStage = request.stage();
@@ -127,7 +138,10 @@ public class DealService {
         }
 
         deal.setStage(targetStage);
-        return dealMapper.toResponse(dealRepository.save(deal));
+        Deal saved = dealRepository.save(deal);
+        logStageChange(saved, currentStage, targetStage, currentUser);
+
+        return dealMapper.toResponse(saved);
     }
 
     public void delete(Long id) {
@@ -141,6 +155,34 @@ public class DealService {
                 .orElseThrow(() -> new ResourceNotFoundException("Deal not found with id: " + id));
     }
 
+    @Transactional(readOnly = true)
+    public List<DealStageHistoryResponse> getStageHistory(Long id) {
+        Deal deal = getDeal(id);
+        checkDealAccess(deal, getCurrentUser());
+        return dealStageHistoryRepository.findByDealIdOrderByCreatedAtAsc(id).stream()
+                .map(this::toHistoryResponse)
+                .toList();
+    }
+
+    private void logStageChange(Deal deal, DealStage fromStage, DealStage toStage, User changedBy) {
+        DealStageHistory history = new DealStageHistory();
+        history.setDeal(deal);
+        history.setFromStage(fromStage);
+        history.setToStage(toStage);
+        history.setChangedBy(changedBy);
+        dealStageHistoryRepository.save(history);
+    }
+
+    private DealStageHistoryResponse toHistoryResponse(DealStageHistory history) {
+        return new DealStageHistoryResponse(
+                history.getId(),
+                history.getFromStage(),
+                history.getToStage(),
+                history.getChangedBy().getName(),
+                history.getCreatedAt()
+        );
+    }
+    
     public Deal getAccessibleDeal(Long id) {
         Deal deal = getDeal(id);
         checkDealAccess(deal, getCurrentUser());

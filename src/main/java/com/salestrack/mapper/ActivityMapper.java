@@ -19,7 +19,9 @@ public interface ActivityMapper {
     Activity toEntity(ActivityRequest request);
 
     @Mapping(target = "dealId", source = "deal.id")
+    @Mapping(target = "dealTitle", source = "deal.title")
     @Mapping(target = "contactId", source = "contact.id")
+    @Mapping(target = "contactName", source = "contact.name")
     @Mapping(target = "loggedByUserId", source = "loggedBy.id")
     @Mapping(target = "loggedByUserName", source = "loggedBy.name")
     ActivityResponse toResponse(Activity activity);

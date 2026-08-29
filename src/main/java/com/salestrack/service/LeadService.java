@@ -1,8 +1,18 @@
 package com.salestrack.service;
 
+import java.util.List;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.salestrack.dto.deal.DealRequest;
 import com.salestrack.dto.deal.DealResponse;
-import com.salestrack.dto.lead.*;
+import com.salestrack.dto.lead.LeadConvertRequest;
+import com.salestrack.dto.lead.LeadRequest;
+import com.salestrack.dto.lead.LeadResponse;
+import com.salestrack.dto.lead.LeadStatusUpdateRequest;
 import com.salestrack.entity.Deal;
 import com.salestrack.entity.Lead;
 import com.salestrack.entity.User;
@@ -12,12 +22,6 @@ import com.salestrack.exception.ResourceNotFoundException;
 import com.salestrack.mapper.LeadMapper;
 import com.salestrack.repository.LeadRepository;
 import com.salestrack.repository.UserRepository;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -121,5 +125,16 @@ public class LeadService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + email));
+    }
+
+    public void delete(Long id) {
+        Lead lead = getLead(id);
+        checkLeadAccess(lead, getCurrentUser());
+
+        if (lead.getStatus() == LeadStatus.CONVERTED) {
+            throw new IllegalArgumentException("Cannot delete a lead that has already been converted to a deal");
+        }
+
+        leadRepository.delete(lead);
     }
 }

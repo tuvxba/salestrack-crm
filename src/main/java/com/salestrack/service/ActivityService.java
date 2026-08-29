@@ -6,7 +6,8 @@ import com.salestrack.entity.Activity;
 import com.salestrack.entity.Deal;
 import com.salestrack.entity.Contact;
 import com.salestrack.entity.User;
-import com.salestrack.exception.ResourceNotFoundException;
+import com.salestrack.enums.ActivityType;
+import com.salestrack.enums.Role;
 import com.salestrack.mapper.ActivityMapper;
 import com.salestrack.repository.ActivityRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,6 +63,28 @@ public class ActivityService {
         }
 
         return activityMapper.toResponse(activityRepository.save(activity));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ActivityResponse> findAll(ActivityType type) {
+        User currentUser = getCurrentUser();
+        List<Activity> activities = activityRepository.findAllWithRelationsOrderByOccurredAtDesc();
+
+        return activities.stream()
+                .filter(activity -> isVisibleTo(activity, currentUser))
+                .filter(activity -> type == null || activity.getType() == type)
+                .map(activityMapper::toResponse)
+                .toList();
+    }
+
+    private boolean isVisibleTo(Activity activity, User currentUser) {
+        if (currentUser.getRole() != Role.SALES_REP) {
+            return true;
+        }
+        if (activity.getDeal() != null) {
+            return activity.getDeal().getAssignedUser().getId().equals(currentUser.getId());
+        }
+        return true;
     }
 
     @Transactional(readOnly = true)
